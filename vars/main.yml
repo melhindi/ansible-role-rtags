@@ -1,0 +1,6 @@
+---
+# vars file for rtags
+
+num_build_jobs: 2
+rtags_version: "HEAD"
+rtags_checkout_path: "/tmp/rtags"

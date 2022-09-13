@@ -1,0 +1,60 @@
+---
+# tasks file for emacs_native_compilation
+
+- name: Include variables
+  ansible.builtin.include_vars:
+    file: main.yml
+
+- name: Ensure git is installed
+  become: true
+  ansible.builtin.apt:
+    name: git
+    state: present
+    update_cache: true
+
+- name: Ensure cmake is installed
+  become: true
+  ansible.builtin.apt:
+    name: cmake
+    state: present
+    update_cache: true
+
+- name: Ensure dependencies are installed
+  become: true
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - llvm
+      - lld
+      - lldb
+      - clang
+      - libclang-dev
+    state: present
+    update_cache: true
+
+- name: Clone rtags repo
+  become: false
+  ansible.builtin.git:
+    repo: "{{ rtags_repo_url }}"
+    dest: "{{ rtags_checkout_path }}"
+    version: "{{ rtags_version }}"
+    recursive: true
+
+- name: Configure rtags
+  become: false
+  ansible.builtin.command:
+    cmd: "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -B build"
+    chdir: "{{ rtags_checkout_path }}"
+    creates: "{{ rtags_checkout_path }}/build/compile_commands.json"
+
+- name: Compile rtags
+  become: false
+  ansible.builtin.make:
+    jobs: "{{ num_build_jobs }}"
+    chdir: "{{ rtags_checkout_path }}/build"
+
+- name: Install rtags
+  become: true
+  ansible.builtin.make:
+    target: install
+    chdir: "{{ rtags_checkout_path }}/build"

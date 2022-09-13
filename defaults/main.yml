@@ -1,0 +1,4 @@
+---
+# defaults file for rtags
+
+rtags_repo_url: "https://github.com/Andersbakken/rtags.git"

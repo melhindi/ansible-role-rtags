@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include melhindi.rtags"
+      include_role:
+        name: "melhindi.rtags"
